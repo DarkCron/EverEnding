@@ -1,0 +1,1 @@
+{GameTileSources:[{Type:{c:com.ever.ending.gameobject.GameSprite},Tex:{texF:badlogic.jpg}}]}
