@@ -21,9 +21,14 @@ public abstract class UIElement implements ISelectable, IMovable, IDrawable, IRe
     private Rectangle location;
     private UIElement parent;
 
+    private Vector2 relativeClickLocation;
+
     private boolean canBeEdited = false;
     private boolean beingEdited = false;
     private UIElement editableController = null;
+
+
+
 
     public UIElement(){
 
@@ -72,7 +77,7 @@ public abstract class UIElement implements ISelectable, IMovable, IDrawable, IRe
         if(!this.canEdit()){
             return;
         }
-        this.setPosition(mouseLoc);
+        this.setPosition(mouseLoc.add(this.getRelativeClickLocation()));
     }
 
     @Override
@@ -140,12 +145,23 @@ public abstract class UIElement implements ISelectable, IMovable, IDrawable, IRe
     @Override
     public void clicked(Vector2 mousePos) {
         Vector2 calc = new Vector2(mousePos.x - this.getPosition().x, mousePos.y - this.getPosition().y);
+        this.relativeClickLocation = relativeClickLocation(calc);
         if(this.canBeEdited && this.editableController != null && this.editableController.getLocation().contains(calc)){
             this.editableController.clicked(mousePos);
             if(this.editableController instanceof UICheckBox){
                 this.setEditable(((UICheckBox) this.editableController).isChecked());
             }
         }
+    }
+
+    @Override
+    public Vector2 relativeClickLocation(Vector2 mousePos) {
+        return new Vector2(this.getParentLoc()).sub(mousePos);
+    }
+
+    @Override
+    public Vector2 getRelativeClickLocation() {
+        return relativeClickLocation;
     }
 
     @Override

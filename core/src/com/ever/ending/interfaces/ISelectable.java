@@ -7,4 +7,6 @@ public interface ISelectable extends IControllable{
     public IMovable select();
     public void unSelect();
     public void clicked(Vector2 mousePos);
+    public Vector2 relativeClickLocation(Vector2 mousePos);
+    public Vector2 getRelativeClickLocation();
 }

@@ -56,6 +56,7 @@ public class UITestScene extends DrawableScene {
             Gdx.input.setInputProcessor(this.getSceneController());
 
             UICollection collection = new UICollection(new Rectangle(300,50,500,500),this);
+            UICollection collection1 = new UICollection(new Rectangle(20,20,100,100),this);
             this.getElements().add(collection);
             UIPanel basicPanel = new UIPanel(new Rectangle(50,0,400,600),new GameSprite("Tests/UI/panel.png"),this);
             //this.getElements().add(basicPanel);
@@ -116,13 +117,36 @@ public class UITestScene extends DrawableScene {
                 e.printStackTrace();
             }
 
+            try {
+                UITextField textField = new UITextField(new Rectangle(0,0,200,80),anim.clone(),this);
+                if(textField.getDrawable() instanceof BasicAnimation){
+                    ((BasicAnimation) textField.getDrawable()).play();
+                    ((BasicAnimation) textField.getDrawable()).repeat(true);
+                    ((BasicAnimation) textField.getDrawable()).setFrameTime(70);
+                }
+                collection1.addElement(textField);
+                //collection.addElement(textField);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
-
+            //this.getElements().add(collection1);
+            collection.addElement(collection1);
         }
 
         @Override
         public void loadResources() {
 
+        }
+
+        @Override
+        public void draw(DeltaTime delta, SpriteBatch batch) {
+            for (UIElement uiElement : this.getElements()) {
+                if(uiElement instanceof IRenderable){
+                    ((IRenderable) uiElement).generateRender(delta);
+                }
+            }
+            super.draw(delta, batch);
         }
     }
 

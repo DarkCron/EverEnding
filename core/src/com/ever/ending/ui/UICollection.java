@@ -11,12 +11,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.ever.ending.gameobject.GameSprite;
 import com.ever.ending.interfaces.IMovable;
+import com.ever.ending.interfaces.IRenderable;
 import com.ever.ending.interfaces.ITypeable;
 import com.ever.ending.management.DeltaTime;
 
 import java.util.ArrayList;
 
-public class UICollection extends UIElement implements ITypeable {
+public class UICollection extends UIElement implements ITypeable, IRenderable {
 
 
     private ArrayList<UIElement> collection;
@@ -107,6 +108,7 @@ public class UICollection extends UIElement implements ITypeable {
             Vector2 calc = new Vector2(mousePos).sub(this.getPosition());
             if(uiElement.containsMouse(calc)){
                 uiElement.clicked(calc);
+                uiElement.getRelativeClickLocation().set(uiElement.relativeClickLocation(calc).add(uiElement.getPosition()).sub(this.getPosition()));
             }
         }
     }
@@ -136,33 +138,6 @@ public class UICollection extends UIElement implements ITypeable {
 
     @Override
     public void draw(DeltaTime delta, Rectangle bounds, SpriteBatch batch) {
-        batch.end();
-
-
-
-        renderBatch.begin();
-
-        collectionRender.begin();
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //renderBatch.draw(GameConstants.DEBUG_TEX,this.getLocation().x,this.getLocation().y,400,400);
-        super.draw(delta, bounds, renderBatch);
-        for (UIElement uiElement : collection) {
-            uiElement.draw(delta,bounds,renderBatch);
-        }
-        renderBatch.flush();
-        //font.draw(renderBatch,"WHELP",-100,-100); //FIXES FONT?
-        collectionRender.end();
-        renderBatch.end();
-
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        batch.begin();
-        //super.draw(delta, bounds, batch);
-//        for (UIElement uiElement : collection) {
-//            uiElement.draw(delta,bounds,batch);
-//        }
         batch.draw(new Sprite(collectionRender.getColorBufferTexture()){
             {
                 this.flip(false,true);
@@ -216,5 +191,33 @@ public class UICollection extends UIElement implements ITypeable {
             }
         }
         return "";
+    }
+
+    @Override
+    public void generateRender(DeltaTime delta) {
+        for (UIElement uiElement : this.collection) {
+            if(uiElement instanceof IRenderable){
+                ((IRenderable) uiElement).generateRender(delta);
+            }
+        }
+
+        renderBatch.begin();
+
+        collectionRender.begin();
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        //renderBatch.draw(GameConstants.DEBUG_TEX,this.getLocation().x,this.getLocation().y,400,400);
+        super.draw(delta, null, renderBatch);
+        for (UIElement uiElement : collection) {
+            uiElement.draw(delta,null,renderBatch);
+        }
+        renderBatch.flush(); //flushed alpha channels
+        collectionRender.end();
+        renderBatch.end();
+    }
+
+    @Override
+    public FrameBuffer getRenderBuffer() {
+        return this.collectionRender;
     }
 }
