@@ -56,7 +56,8 @@ public class UITestScene extends DrawableScene {
             Gdx.input.setInputProcessor(this.getSceneController());
 
             UICollection collection = new UICollection(new Rectangle(300,50,500,500),this);
-            UICollection collection1 = new UICollection(new Rectangle(20,20,100,100),this);
+            UICollection collection1 = new UICollection(new Rectangle(20,20,300,300),this);
+            UICollection collection2 = new UICollection(new Rectangle(00,00,200,200),this);
             this.getElements().add(collection);
             UIPanel basicPanel = new UIPanel(new Rectangle(50,0,400,600),new GameSprite("Tests/UI/panel.png"),this);
             //this.getElements().add(basicPanel);
@@ -118,7 +119,7 @@ public class UITestScene extends DrawableScene {
             }
 
             try {
-                UITextField textField = new UITextField(new Rectangle(0,0,200,80),anim.clone(),this);
+                UITextField textField = new UITextField(new Rectangle(0,0,500,80),anim.clone(),this);
                 if(textField.getDrawable() instanceof BasicAnimation){
                     ((BasicAnimation) textField.getDrawable()).play();
                     ((BasicAnimation) textField.getDrawable()).repeat(true);
@@ -130,6 +131,20 @@ public class UITestScene extends DrawableScene {
                 e.printStackTrace();
             }
 
+            try {
+                UITextField textField = new UITextField(new Rectangle(0,0,500,80),anim.clone(),this);
+                if(textField.getDrawable() instanceof BasicAnimation){
+                    ((BasicAnimation) textField.getDrawable()).play();
+                    ((BasicAnimation) textField.getDrawable()).repeat(true);
+                    ((BasicAnimation) textField.getDrawable()).setFrameTime(70);
+                }
+                collection2.addElement(textField);
+                //collection.addElement(textField);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            collection1.addElement(collection2);
             //this.getElements().add(collection1);
             collection.addElement(collection1);
         }

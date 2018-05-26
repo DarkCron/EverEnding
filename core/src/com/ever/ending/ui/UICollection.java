@@ -23,6 +23,11 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
     private ArrayList<UIElement> collection;
     private FrameBuffer collectionRender;
     private SpriteBatch renderBatch;
+
+    public OrthographicCamera getTransformMatrix() {
+        return transformMatrix;
+    }
+
     private OrthographicCamera transformMatrix;
 
     public UICollection(){
@@ -63,6 +68,12 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
         this.transformMatrix.translate(deltaMovement);
         this.transformMatrix.update();
         renderBatch.setProjectionMatrix(this.transformMatrix.combined);
+
+        for (UIElement uiElement : collection) {
+            if(uiElement instanceof UICollection){
+                updateTransformCollection((UICollection) uiElement);
+            }
+        }
     }
 
     @Override
@@ -73,6 +84,28 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
         this.transformMatrix.translate(location);
         this.transformMatrix.update();
         renderBatch.setProjectionMatrix(this.transformMatrix.combined);
+
+        for (UIElement uiElement : collection) {
+            if(uiElement instanceof UICollection){
+                updateTransformCollection((UICollection) uiElement);
+            }
+        }
+    }
+
+    private void updateTransformCollection(UICollection uiElement){
+        OrthographicCamera newTransform =  new OrthographicCamera(((UICollection) uiElement).getRenderBuffer().getWidth(),((UICollection) uiElement).getRenderBuffer().getHeight());
+        newTransform.translate(newTransform.viewportWidth/2,newTransform.viewportHeight/2);
+        newTransform.translate(uiElement.getLocation().x,uiElement.getLocation().y);
+        Vector2 stuff = new Vector2(uiElement.getParentLoc());
+        newTransform.translate(new Vector2(stuff));
+        newTransform.update();
+        ((UICollection) uiElement).setTransformMatrix(newTransform);
+
+        for (UIElement element : uiElement.getCollection()) {
+            if(element instanceof UICollection){
+                updateTransformCollection((UICollection) element);
+            }
+        }
     }
 
     @Override
@@ -108,7 +141,7 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
             Vector2 calc = new Vector2(mousePos).sub(this.getPosition());
             if(uiElement.containsMouse(calc)){
                 uiElement.clicked(calc);
-                uiElement.getRelativeClickLocation().set(uiElement.relativeClickLocation(calc).add(uiElement.getPosition()).sub(this.getPosition()));
+                uiElement.getRelativeClickLocation().set(uiElement.relativeClickLocation(calc).add(uiElement.getPosition()).sub(new Vector2(this.getPosition()).add(this.getParentLoc())));
             }
         }
     }
@@ -117,6 +150,10 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
         this.collection.add(element);
         element.setParent(this);
         element.setParentScene(this.getParentScene());
+
+        if(element instanceof UICollection){
+            ((UICollection) element).updateTransformCollection((UICollection) element);
+        }
     }
 
 
@@ -131,6 +168,9 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
     @Override
     public void update(DeltaTime delta) {
         super.update(delta);
+        this.getTransformMatrix().update();
+        renderBatch.setProjectionMatrix(this.getTransformMatrix().combined);
+
         for (UIElement uiElement : collection) {
             uiElement.update(delta);
         }
@@ -142,7 +182,7 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
             {
                 this.flip(false,true);
             }
-        },this.getLocation().x,this.getLocation().y,this.getLocation().width,this.getLocation().height);
+        },this.getLocation().x + this.getParentLoc().x,this.getLocation().y + this.getParentLoc().y,this.getLocation().width,this.getLocation().height);
         if(this.isCanBeEdited() && this.getEditableController() != null){
             this.getEditableController().draw(delta,null,batch);
         }
@@ -150,6 +190,13 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
 
     @Override
     public void resize(Vector2 mod) {
+        for (UIElement uiElement : collection) {
+            if(uiElement.canEdit()){
+                uiElement.resize(mod);
+                return;
+            }
+        }
+
         super.resize(mod);
         collectionRender.dispose();
         collectionRender = new FrameBuffer(Pixmap.Format.RGBA8888,(int)this.getLocation().width,(int)this.getLocation().height,false);
@@ -157,6 +204,8 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
             {
                 this.translate(this.viewportWidth/2,this.viewportHeight/2);
                 this.translate(getLocation().x,getLocation().y);
+                Vector2 stuff = getParentLoc();
+                this.translate(new Vector2(stuff));
                 this.update();
             }
         };
@@ -202,9 +251,8 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
         }
 
         renderBatch.begin();
-
         collectionRender.begin();
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         //renderBatch.draw(GameConstants.DEBUG_TEX,this.getLocation().x,this.getLocation().y,400,400);
         super.draw(delta, null, renderBatch);
@@ -219,5 +267,9 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
     @Override
     public FrameBuffer getRenderBuffer() {
         return this.collectionRender;
+    }
+
+    public void setTransformMatrix(OrthographicCamera transformMatrix) {
+        this.transformMatrix = transformMatrix;
     }
 }

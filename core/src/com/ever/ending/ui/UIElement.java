@@ -274,10 +274,10 @@ public abstract class UIElement implements ISelectable, IMovable, IDrawable, IRe
         this.editableController = editableController;
     }
 
-    public Vector2 getParentLoc(){
-        if(this.parent == null){
+    public Vector2 getParentLoc() {
+        if (this.parent == null) {
             return Vector2.Zero;
-        }else{
+        }else {
             Vector2 temp = this.parent.getParentLoc();
             return new Vector2(temp.x + this.parent.getLocation().x, temp.y + this.parent.getLocation().y);
         }
