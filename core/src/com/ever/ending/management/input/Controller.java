@@ -2,7 +2,7 @@ package com.ever.ending.management.input;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.ever.ending.interfaces.IMovable;
+import com.ever.ending.interfaces.manipulation.IMovable;
 import com.ever.ending.interfaces.control.IController;
 import com.ever.ending.interfaces.control.IControllerCamera;
 import com.ever.ending.interfaces.control.IControllerMoveable;

@@ -10,9 +10,9 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.ever.ending.gameobject.GameSprite;
-import com.ever.ending.interfaces.IMovable;
+import com.ever.ending.interfaces.manipulation.IMovable;
 import com.ever.ending.interfaces.IRenderable;
-import com.ever.ending.interfaces.ITypeable;
+import com.ever.ending.interfaces.manipulation.ITypeable;
 import com.ever.ending.management.DeltaTime;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
     }
 
     public UICollection(Rectangle location, UIScene parentScene){
-        super(location,new GameSprite("Tests/UI/panel.png"),parentScene);
+        super(location,new GameSprite("Tests/manipulation/panel.png"),parentScene);
         this.collection = new ArrayList<>();
         collectionRender = new FrameBuffer(Pixmap.Format.RGBA8888,(int)location.width,(int)location.height,false);
         renderBatch = new SpriteBatch();
@@ -56,6 +56,8 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
             if(uiElement.canEdit()){
                 uiElement.drag(calc);
                 return;
+            }else if(uiElement instanceof UICollection){
+                uiElement.drag(calc);
             }
         }
 
@@ -200,15 +202,7 @@ public class UICollection extends UIElement implements ITypeable, IRenderable {
         super.resize(mod);
         collectionRender.dispose();
         collectionRender = new FrameBuffer(Pixmap.Format.RGBA8888,(int)this.getLocation().width,(int)this.getLocation().height,false);
-        this.transformMatrix = new OrthographicCamera(collectionRender.getWidth(),collectionRender.getHeight()){
-            {
-                this.translate(this.viewportWidth/2,this.viewportHeight/2);
-                this.translate(getLocation().x,getLocation().y);
-                Vector2 stuff = getParentLoc();
-                this.translate(new Vector2(stuff));
-                this.update();
-            }
-        };
+        updateTransformCollection(this);
         this.setPosition(this.getPosition());
     }
 

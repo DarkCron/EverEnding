@@ -3,8 +3,7 @@ package com.ever.ending.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
-import com.ever.ending.interfaces.IEditable;
+import com.ever.ending.interfaces.manipulation.IEditable;
 import com.ever.ending.management.DeltaTime;
 import com.ever.ending.management.DrawableScene;
 

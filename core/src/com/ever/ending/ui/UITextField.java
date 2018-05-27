@@ -7,14 +7,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.ever.ending.gameobject.GameSprite;
-import com.ever.ending.interfaces.ITypeable;
+import com.ever.ending.interfaces.manipulation.ITypeable;
 import com.ever.ending.interfaces.drawable.IDrawable;
 import com.ever.ending.management.DeltaTime;
 import com.ever.ending.management.GameFont;
 
 public class UITextField extends UIElement implements ITypeable {
 
-    private static final String DEFAULT_TF_PATH = "Tests/UI/textField_panel.png";
+    private static final String DEFAULT_TF_PATH = "Tests/manipulation/textField_panel.png";
     private static final Vector2 DEFAULT_OFFSET = new Vector2(5,5);
     private UIPanel typePanel;
     private String fieldString = "";

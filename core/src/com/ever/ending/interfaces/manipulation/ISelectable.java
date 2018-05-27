@@ -1,4 +1,4 @@
-package com.ever.ending.interfaces;
+package com.ever.ending.interfaces.manipulation;
 
 import com.badlogic.gdx.math.Vector2;
 

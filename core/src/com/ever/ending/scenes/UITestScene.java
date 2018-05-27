@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.ever.ending.gameobject.GameSprite;
 import com.ever.ending.interfaces.*;
+import com.ever.ending.interfaces.manipulation.*;
 import com.ever.ending.interfaces.control.IController;
 import com.ever.ending.interfaces.control.IControllerMouse;
 import com.ever.ending.interfaces.drawable.IDrawable;
@@ -59,7 +60,7 @@ public class UITestScene extends DrawableScene {
             UICollection collection1 = new UICollection(new Rectangle(20,20,300,300),this);
             UICollection collection2 = new UICollection(new Rectangle(00,00,200,200),this);
             this.getElements().add(collection);
-            UIPanel basicPanel = new UIPanel(new Rectangle(50,0,400,600),new GameSprite("Tests/UI/panel.png"),this);
+            UIPanel basicPanel = new UIPanel(new Rectangle(50,0,400,600),new GameSprite("Tests/manipulation/panel.png"),this);
             //this.getElements().add(basicPanel);
             //collection.addElement(basicPanel);
 
@@ -72,7 +73,7 @@ public class UITestScene extends DrawableScene {
                 frames[(frames.length/2-i)+frames.length/2] = new Rectangle((i)%10,(i)/10,1,1);
             }
 
-            BasicAnimation anim = new BasicAnimation("Tests/UI/panelAnim.png",frames,100);
+            BasicAnimation anim = new BasicAnimation("Tests/manipulation/panelAnim.png",frames,100);
             UIPanel animatedPanel = new UIPanel(new Rectangle(500,0,400,600),anim,this);
             anim.play();
             anim.repeat(true);

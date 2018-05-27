@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import com.ever.ending.interfaces.IMovable;
+import com.ever.ending.interfaces.manipulation.IMovable;
 import com.ever.ending.interfaces.resources.IReloadable;
 import com.ever.ending.management.DeltaTime;
 import com.ever.ending.interfaces.drawable.IDrawable;
