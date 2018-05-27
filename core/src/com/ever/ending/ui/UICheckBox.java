@@ -8,8 +8,8 @@ import com.ever.ending.interfaces.drawable.IDrawable;
 import com.ever.ending.management.DeltaTime;
 
 public class UICheckBox extends UIElement {
-    private static final IDrawable CHECKED_BOX = new GameSprite("Tests/manipulation/ui_checkbox.png",0,0,32,32);
-    private static final IDrawable UNCHECKED_BOX = new GameSprite("Tests/manipulation/ui_checkbox.png",32,0,32,32);
+    private static final IDrawable CHECKED_BOX = new GameSprite("Tests/UI/ui_checkbox.png",0,0,32,32);
+    private static final IDrawable UNCHECKED_BOX = new GameSprite("Tests/UI/ui_checkbox.png",32,0,32,32);
 
     private boolean isChecked = false;
     private UITextField label = null;
@@ -26,7 +26,7 @@ public class UICheckBox extends UIElement {
 
     public  UICheckBox(Rectangle location, boolean bChecked, UIScene parentScene, String label){
         this(location,bChecked,parentScene);
-        this.label = new UITextField(label,25, new Vector2(30,-10), new GameSprite("Tests/manipulation/panelAnim.png",3,3,1,1),this.getParentScene());
+        this.label = new UITextField(label,25, new Vector2(30,-10), new GameSprite("Tests/UI/panelAnim.png",3,3,1,1),this.getParentScene());
         this.label.setParent(this);
     }
 

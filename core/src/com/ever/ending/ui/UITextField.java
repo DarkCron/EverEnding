@@ -14,7 +14,7 @@ import com.ever.ending.management.GameFont;
 
 public class UITextField extends UIElement implements ITypeable {
 
-    private static final String DEFAULT_TF_PATH = "Tests/manipulation/textField_panel.png";
+    private static final String DEFAULT_TF_PATH = "Tests/UI/textField_panel.png";
     private static final Vector2 DEFAULT_OFFSET = new Vector2(5,5);
     private UIPanel typePanel;
     private String fieldString = "";

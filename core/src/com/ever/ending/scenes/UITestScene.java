@@ -18,6 +18,8 @@ import com.ever.ending.management.animation.BasicAnimation;
 import com.ever.ending.management.input.Controller;
 import com.ever.ending.ui.*;
 
+import java.awt.*;
+
 public class UITestScene extends DrawableScene {
     private UITest uiScene;
 
@@ -60,7 +62,7 @@ public class UITestScene extends DrawableScene {
             UICollection collection1 = new UICollection(new Rectangle(20,20,300,300),this);
             UICollection collection2 = new UICollection(new Rectangle(00,00,200,200),this);
             this.getElements().add(collection);
-            UIPanel basicPanel = new UIPanel(new Rectangle(50,0,400,600),new GameSprite("Tests/manipulation/panel.png"),this);
+            UIPanel basicPanel = new UIPanel(new Rectangle(50,0,400,600),new GameSprite("Tests/UI/panel.png"),this);
             //this.getElements().add(basicPanel);
             //collection.addElement(basicPanel);
 
@@ -73,7 +75,7 @@ public class UITestScene extends DrawableScene {
                 frames[(frames.length/2-i)+frames.length/2] = new Rectangle((i)%10,(i)/10,1,1);
             }
 
-            BasicAnimation anim = new BasicAnimation("Tests/manipulation/panelAnim.png",frames,100);
+            BasicAnimation anim = new BasicAnimation("Tests/UI/panelAnim.png",frames,100);
             UIPanel animatedPanel = new UIPanel(new Rectangle(500,0,400,600),anim,this);
             anim.play();
             anim.repeat(true);
@@ -148,6 +150,36 @@ public class UITestScene extends DrawableScene {
             collection1.addElement(collection2);
             //this.getElements().add(collection1);
             collection.addElement(collection1);
+            
+            collection.addElement(new UIButton(new Rectangle(500,400,50,50),this){
+                {
+                    this.setClick_function((v)->{
+                        if(this.getParent() instanceof UICollection){
+                            for (UIElement uiElement : ((UICollection) this.getParent()).getCollection()) {
+                                if(uiElement instanceof UITextField){
+                                    ((UITextField) uiElement).setInput("Clicked form: "+v);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
+            collection.addElement(new UIButton(new Rectangle(50,400,50,50),this){
+                {
+                    this.setClick_function((v)->{
+                        collection1.open();
+                    });
+                }
+            });
+
+            collection.addElement(new UIButton(new Rectangle(110,400,50,50),this){
+                {
+                    this.setClick_function((v)->{
+                        collection1.close();
+                    });
+                }
+            });
         }
 
         @Override
@@ -274,8 +306,9 @@ public class UITestScene extends DrawableScene {
 
         @Override
         public void mouseMove(Vector2 mouseLoc) {
-
-
+            for (int i = uiScene.getElements().size()-1; i >= 0; i--) {
+                uiScene.getElements().get(i).mouseMove(mouseLoc, this);
+            }
         }
 
         @Override
@@ -285,26 +318,6 @@ public class UITestScene extends DrawableScene {
                     ((ISelectable) this.getMovableObj()).clicked(mouseLoc);
                 }
             }
-
-            for (int i = uiScene.getElements().size()-1; i >= 0; i--) {
-                if(uiScene.getElements().get(i).containsMouse(mouseLoc)){
-                    if(uiScene.getElements().get(i) == this.getMovableObj()){
-                        return;
-                    }
-
-                    if(uiScene.getElements().get(i) instanceof ISelectable){
-                        if(this.getMovableObj() != null){
-                            ((ISelectable) this.getMovableObj()).unSelect();
-                        }
-                        this.setMovableObj(uiScene.getElements().get(i).select());
-                        return;
-                    }
-                }
-            }
-            if(this.getMovableObj() != null){
-                ((ISelectable) this.getMovableObj()).unSelect();
-            }
-            this.setMovableObj(null);
         }
 
         @Override
@@ -331,14 +344,6 @@ public class UITestScene extends DrawableScene {
 
         @Override
         public boolean keyTyped(char character) {
-//            if(this.getMovableObj() instanceof IEditable){
-//                if(!((IEditable) this.getMovableObj()).canEdit()){
-//                    return false;
-//                }
-//            }else{
-//                return false;
-//            }
-
             if('\t' == character){
                 return true;
             }

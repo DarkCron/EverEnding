@@ -1,5 +1,6 @@
 package com.ever.ending.interfaces;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.ever.ending.management.DeltaTime;
 

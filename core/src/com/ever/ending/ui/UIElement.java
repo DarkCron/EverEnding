@@ -1,5 +1,6 @@
 package com.ever.ending.ui;
 
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -13,6 +14,7 @@ import com.ever.ending.interfaces.manipulation.ISelectable;
 import com.ever.ending.interfaces.drawable.IDrawable;
 import com.ever.ending.management.DeltaTime;
 import com.ever.ending.management.GameFont;
+import com.ever.ending.management.input.Controller;
 
 public abstract class UIElement implements ISelectable, IMovable, IDrawable, IResizable, IEditable {
 
@@ -21,7 +23,7 @@ public abstract class UIElement implements ISelectable, IMovable, IDrawable, IRe
     private Rectangle location;
     private UIElement parent;
 
-    private Vector2 relativeClickLocation;
+    private Vector2 relativeClickLocation = Vector2.Zero;
 
     private boolean canBeEdited = false;
     private boolean beingEdited = false;
@@ -141,6 +143,15 @@ public abstract class UIElement implements ISelectable, IMovable, IDrawable, IRe
         }
     }
 
+    @Override
+    public void mouseMove(Vector2 mousePos, Controller controller) {
+        if(this.containsMouse(mousePos)){
+            controller.setMovableObj(this);
+            this.select();
+        }else{
+            this.unSelect();
+        }
+    }
 
     @Override
     public void clicked(Vector2 mousePos) {
@@ -168,9 +179,15 @@ public abstract class UIElement implements ISelectable, IMovable, IDrawable, IRe
     public boolean containsMouse(Vector2 mousePos) {
         boolean contains = false;
         contains = this.getLocation().contains(mousePos);
-        if(!contains && this.canBeEdited && this.editableController != null){
+        if(!contains  && this.editableController != null){
             Vector2 calc = new Vector2(mousePos.x - this.getPosition().x, mousePos.y - this.getPosition().y);
-            contains = this.editableController.getLocation().contains(calc);
+            //contains = this.editableController.getLocation().contains(calc);
+            if(!contains){
+                Rectangle temp = new Rectangle(this.location);
+                temp.height += 42;
+                temp.y += 42;
+                contains = temp.contains(mousePos);
+            }
         }
         return contains;
     }
