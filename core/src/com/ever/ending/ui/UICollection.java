@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.ever.ending.gameobject.GameSprite;
 import com.ever.ending.interfaces.IRenderable;
+import com.ever.ending.interfaces.control.IController;
 import com.ever.ending.interfaces.drawable.IDrawable;
 import com.ever.ending.interfaces.manipulation.IMovable;
 import com.ever.ending.interfaces.manipulation.IOpenClose;
@@ -55,18 +56,18 @@ public class UICollection extends UIElement implements ITypeable, IRenderable, I
     }
 
     @Override
-    public void drag(Vector2 mouseLoc) {
+    public void drag(Vector2 mouseLoc, IController.KnownMouseButtons button) {
         for (UIElement uiElement : collection) {
             Vector2 calc = new Vector2(mouseLoc).sub(this.getPosition());
             if(uiElement.canEdit()){
-                uiElement.drag(calc);
+                uiElement.drag(calc,button);
                 return;
             }else if(uiElement instanceof UICollection){
-                uiElement.drag(calc);
+                uiElement.drag(calc,button);
             }
         }
 
-        super.drag(mouseLoc);
+        super.drag(mouseLoc,button);
     }
 
     @Override
@@ -134,10 +135,11 @@ public class UICollection extends UIElement implements ITypeable, IRenderable, I
             Vector2 calc = new Vector2(mousePos).sub(this.getPosition());
             if(uiElement.containsMouse(calc)){
                 uiElement.select();
-            }else if(uiElement.isCanBeEdited()){
+            }else if(!uiElement.canEdit()){
                 uiElement.unSelect();
             }
         }
+
         return super.containsMouse(mousePos);
     }
 
@@ -147,20 +149,21 @@ public class UICollection extends UIElement implements ITypeable, IRenderable, I
     }
 
     @Override
-    public void clicked(Vector2 mousePos) {
-        super.clicked(mousePos);
+    public void clicked(Vector2 mousePos, IController.KnownMouseButtons button) {
+        super.clicked(mousePos,button);
         if(menuBar != null){
             for (UIButton uiButton : menuBar.getButtons()) {
                 if(uiButton.containsMouse(new Vector2(mousePos).sub(this.getPosition()))){
-                    uiButton.clicked(mousePos);
+                    uiButton.clicked(mousePos, button);
+                    return;
                 }
             }
         }
-        for (int i = 0; i < collection.size(); i++) {
+        for (int i = collection.size()-1; i >= 0; i--) {
             UIElement uiElement = collection.get(i);
             Vector2 calc = new Vector2(mousePos).sub(this.getPosition());
             if(uiElement.containsMouse(calc)){
-                uiElement.clicked(calc);
+                uiElement.clicked(calc, button);
                 uiElement.getRelativeClickLocation().set(uiElement.relativeClickLocation(calc).add(uiElement.getPosition()).sub(new Vector2(this.getPosition()).add(this.getParentLoc())));
             }
         }
@@ -281,7 +284,7 @@ public class UICollection extends UIElement implements ITypeable, IRenderable, I
 
         renderBatch.begin();
         collectionRender.begin();
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         //renderBatch.draw(GameConstants.DEBUG_TEX,this.getLocation().x,this.getLocation().y,400,400);
         super.draw(delta, null, renderBatch);
@@ -327,6 +330,7 @@ public class UICollection extends UIElement implements ITypeable, IRenderable, I
     public void open() {
         if(!this.isOpen() && this.getParent() instanceof UICollection){
             ((UICollection) this.getParent()).getCollection().add(this);
+            this.updateTransformCollection(this);
         }
     }
 

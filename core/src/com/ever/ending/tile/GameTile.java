@@ -14,6 +14,7 @@ public class GameTile implements IDrawable, Json.Serializable, IReloadable {
     private Vector2 tileLoc;
     private IDrawable tileTex;
     private int resourceID;
+    private Rectangle gamePos;
 
     @Override
     public void update(DeltaTime delta) {
@@ -33,6 +34,11 @@ public class GameTile implements IDrawable, Json.Serializable, IReloadable {
     @Override
     public IDrawable clone() throws CloneNotSupportedException {
         return null;
+    }
+
+    @Override
+    public Rectangle getScreenPos() {
+        return gamePos;
     }
 
     @Override

@@ -66,6 +66,42 @@ public class UITextField extends UIElement implements ITypeable {
         typePanel.setParent(this);
     }
 
+    public UITextField(String text, GameFont font, Vector2 loc, IDrawable bg, UIScene parentScene){
+        super(new Rectangle(),bg,parentScene);
+
+        this.font = font.getFont();
+        this.fieldString = text;
+        this.textLayout = new GlyphLayout(this.font,this.fieldString);
+        this.typePanelOffset = DEFAULT_OFFSET;
+        this.setLocation(this.optimalPanelSize(this.textLayout));
+        this.getLocation().setX(this.getLocation().x + loc.x);
+        this.getLocation().setY(this.getLocation().y + loc.y);
+
+        typePanel = new UIPanel(new Rectangle(),new GameSprite(DEFAULT_TF_PATH,3,3,1,1), parentScene);
+        this.setTypePanelSize(this.typePanelOffset);
+        this.generateTextLoc();
+
+        typePanel.setParent(this);
+    }
+
+    public UITextField(String text, GameFont font, Rectangle loc, IDrawable bg, UIScene parentScene){
+        super(loc,bg,parentScene);
+
+        this.font = font.getFont();
+        this.fieldString = text;
+        this.textLayout = new GlyphLayout(this.font,this.fieldString);
+        this.typePanelOffset = DEFAULT_OFFSET;
+        this.setLocation(loc);
+//        this.getLocation().setX(this.getLocation().x + loc.x);
+//        this.getLocation().setY(this.getLocation().y + loc.y);
+
+        typePanel = new UIPanel(new Rectangle(),new GameSprite(DEFAULT_TF_PATH,3,3,1,1), parentScene);
+        this.setTypePanelSize(this.typePanelOffset);
+        this.generateTextLoc();
+
+        typePanel.setParent(this);
+    }
+
     private void setTypePanelSize(Vector2 offset) {
         Rectangle tf_bounds = new Rectangle(offset.x,offset.y,this.getLocation().width-2*offset.x,this.getLocation().height-2*offset.y);
         this.typePanel.setLocation(tf_bounds);
@@ -77,9 +113,24 @@ public class UITextField extends UIElement implements ITypeable {
         return tf_bounds;
     }
 
-    private void generateTextLoc() {
-        this.textLoc = new Vector2(this.getLocation().x + (typePanel.getLocation().x)/2 + typePanelOffset.x,
-                this.getLocation().y + typePanel.getLocation().y  + (typePanel.getLocation().height ) - (typePanel.getLocation().height - textLayout.height)/3 );
+    protected void generateTextLoc() {
+        Vector2 newTextLoc= new Vector2(this.getPosition());
+        newTextLoc.x +=  typePanelOffset.x;
+//        newTextLoc.y +=  typePanel.getLocation().y  + (typePanel.getLocation().height ) - (typePanel.getLocation().height - textLayout.height)/3;
+        newTextLoc.y +=  (this.getLocation().height )/2 + (textLayout.height)/2;
+        this.textLoc = new Vector2(newTextLoc);
+    }
+
+    protected Vector2 getTextLoc(){
+        return this.textLoc;
+    }
+
+    protected UIPanel getTypePanel() {
+        return typePanel;
+    }
+
+    protected GlyphLayout getTextLayout() {
+        return textLayout;
     }
 
     @Override
@@ -106,11 +157,11 @@ public class UITextField extends UIElement implements ITypeable {
         }
 
         this.generateTextLoc();
-        while(this.textLayout.width + 10 > this.typePanel.getLocation().width){
-            this.setSize(new Vector2(this.getLocation().width+10,this.getLocation().height));
+        while(this.textLayout.width + typePanelOffset.x > this.typePanel.getLocation().width){
+            this.setSize(new Vector2(this.getLocation().width+typePanelOffset.x,this.getLocation().height));
         }
-        while(this.textLayout.height + 10 > this.typePanel.getLocation().height){
-            this.setSize(new Vector2(this.getLocation().width,this.getLocation().height+10));
+        while(this.textLayout.height + typePanelOffset.y > this.typePanel.getLocation().height){
+            this.setSize(new Vector2(this.getLocation().width,this.getLocation().height+typePanelOffset.y));
         }
     }
 

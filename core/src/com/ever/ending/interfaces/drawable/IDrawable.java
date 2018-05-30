@@ -11,4 +11,5 @@ public interface IDrawable extends Json.Serializable,Cloneable{
     public void draw(DeltaTime delta, Rectangle bounds, SpriteBatch batch);
     public void dispose();
     public IDrawable clone() throws CloneNotSupportedException;
+    public Rectangle getScreenPos();
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.ever.ending.interfaces.control.IController;
 import com.ever.ending.interfaces.manipulation.IEditable;
 import com.ever.ending.interfaces.manipulation.IMovable;
 import com.ever.ending.interfaces.manipulation.IResizable;
@@ -75,11 +76,13 @@ public abstract class UIElement implements ISelectable, IMovable, IDrawable, IRe
     }
 
     @Override
-    public void drag(Vector2 mouseLoc) {
+    public void drag(Vector2 mouseLoc, IController.KnownMouseButtons button) {
         if(!this.canEdit()){
             return;
         }
-        this.setPosition(mouseLoc.add(this.getRelativeClickLocation()));
+        if(button == IController.KnownMouseButtons.RIGHT){
+            this.setPosition(mouseLoc.add(this.getRelativeClickLocation()));
+        }
     }
 
     @Override
@@ -154,12 +157,15 @@ public abstract class UIElement implements ISelectable, IMovable, IDrawable, IRe
     }
 
     @Override
-    public void clicked(Vector2 mousePos) {
+    public void clicked(Vector2 mousePos, IController.KnownMouseButtons button) {
         Vector2 calc = new Vector2(mousePos.x - this.getPosition().x, mousePos.y - this.getPosition().y);
         this.relativeClickLocation = relativeClickLocation(calc);
-        if(this.canBeEdited && this.editableController != null && this.editableController.getLocation().contains(calc)){
-            this.editableController.clicked(mousePos);
+        if(this.canBeEdited && this.editableController != null && this.editableController.getLocation().contains(calc) && button == IController.KnownMouseButtons.LEFT){
+            this.editableController.clicked(mousePos,button);
             if(this.editableController instanceof UICheckBox){
+//                if(this.parent != null){
+//                    (parent).setEditable(false);
+//                }
                 this.setEditable(((UICheckBox) this.editableController).isChecked());
             }
         }
@@ -210,13 +216,19 @@ public abstract class UIElement implements ISelectable, IMovable, IDrawable, IRe
         if(this.getDrawable() != null){
             if(this.getParent() == null){
                 this.getDrawable().draw(delta,this.getLocation(),batch);
-                font.draw(batch,this.getClass().getName(),this.getLocation().x,this.getLocation().y  );
+
+                if(this.isCanBeEdited()){
+                    font.draw(batch,this.getClass().getName(),this.getLocation().x,this.getLocation().y  );
+                }
             }else{
                 Rectangle actualLoc = new Rectangle(this.getLocation());
                 actualLoc.setPosition(this.getParentLoc().x + actualLoc.x, this.getParentLoc().y + actualLoc.y);
                 // actualLoc.setPosition(this.getParentLoc().x, this.getParentLoc().y);
                 this.getDrawable().draw(delta,actualLoc,batch);
-                font.draw(batch,this.getClass().getName(),actualLoc.x,actualLoc.y  );
+
+                if(this.isCanBeEdited()){
+                    font.draw(batch,this.getClass().getName(),actualLoc.x,actualLoc.y  );
+                }
             }
         }
 

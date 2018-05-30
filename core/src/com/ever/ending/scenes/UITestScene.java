@@ -3,14 +3,15 @@ package com.ever.ending.scenes;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.ever.ending.gameobject.GameSprite;
-import com.ever.ending.interfaces.*;
-import com.ever.ending.interfaces.manipulation.*;
+import com.ever.ending.interfaces.IRenderable;
 import com.ever.ending.interfaces.control.IController;
 import com.ever.ending.interfaces.control.IControllerMouse;
 import com.ever.ending.interfaces.drawable.IDrawable;
+import com.ever.ending.interfaces.manipulation.*;
 import com.ever.ending.management.DeltaTime;
 import com.ever.ending.management.DrawableScene;
 import com.ever.ending.management.GameConstants;
@@ -18,14 +19,20 @@ import com.ever.ending.management.animation.BasicAnimation;
 import com.ever.ending.management.input.Controller;
 import com.ever.ending.ui.*;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class UITestScene extends DrawableScene {
     private UITest uiScene;
 
-    public UITestScene(){
-        super();
-        this.uiScene = new UITest();
+    public UITestScene(FrameBuffer mainCanvas){
+        super(mainCanvas);
+        this.uiScene = new UITest(mainCanvas);
     }
 
     @Override
@@ -53,7 +60,8 @@ public class UITestScene extends DrawableScene {
 
     class UITest extends UIScene{
 
-        public UITest(){
+        public UITest(FrameBuffer mainCanvas){
+            super(mainCanvas);
             this.setEditable(true);
             this.setSceneController(new UIController(){});
             Gdx.input.setInputProcessor(this.getSceneController());
@@ -147,6 +155,20 @@ public class UITestScene extends DrawableScene {
                 e.printStackTrace();
             }
 
+            try {
+                UIStylizedText textField = new UIStylizedText(new Rectangle(0,0,100,100),anim.clone(),this);
+                if(textField.getDrawable() instanceof BasicAnimation){
+                    ((BasicAnimation) textField.getDrawable()).play();
+                    ((BasicAnimation) textField.getDrawable()).repeat(true);
+                    ((BasicAnimation) textField.getDrawable()).setFrameTime(70);
+                }
+                textField.setInput("Stylized.");
+                this.getElements().add(textField);
+                //collection.addElement(textField);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
             collection1.addElement(collection2);
             //this.getElements().add(collection1);
             collection.addElement(collection1);
@@ -177,6 +199,36 @@ public class UITestScene extends DrawableScene {
                 {
                     this.setClick_function((v)->{
                         collection1.close();
+                    });
+                }
+            });
+
+            this.getElements().add(new UIButton(new Rectangle(610,400,50,50),this){
+                {
+                    this.setClick_function((v)->{
+                        try {
+                            ScriptEngineManager factory = new ScriptEngineManager();
+                            ScriptEngine engine = factory.getEngineByName("nashorn");
+                            engine.eval("" +
+                                    "var Rectangle = Java.type('com.badlogic.gdx.math.Rectangle');" +
+                                    "var rect = new Rectangle(5,5,20,20);" +
+                                    "print(rect);");
+                            TextArea area = new TextArea();
+                            area.setName("Script");
+                            JFrame frame = new JFrame();
+                            frame.add(area);
+                            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                            frame.addWindowListener(new WindowAdapter() {
+                                @Override
+                                public void windowClosed(WindowEvent e) {
+                                    System.out.println(area.getText());
+                                }
+                            });
+                            frame.setVisible(true);
+                        }catch (Exception e){
+                            System.out.println(e.getMessage());
+                        }
+
                     });
                 }
             });
@@ -293,19 +345,27 @@ public class UITestScene extends DrawableScene {
 
         @Override
         public boolean touchDragged(int screenX, int screenY, int pointer) {
-            this.drag(new Vector2(screenX,GameConstants.SCREEN_HEIGHT -screenY));
+            this.drag(new Vector2(screenX,GameConstants.SCREEN_HEIGHT -screenY),this.getLastPressedButton());
             return super.touchDragged(screenX, screenY, pointer);
         }
 
         @Override
-        public void drag(Vector2 mouseLoc) {
-            if(this.getMovableObj()!=null){
-                this.getMovableObj().drag(new Vector2(mouseLoc.x, mouseLoc.y));
+        public void drag(Vector2 mouseLoc, KnownMouseButtons button) {
+//            if(this.getMovableObj()!=null){
+//                this.getMovableObj().drag(new Vector2(mouseLoc.x, mouseLoc.y),button);
+//            }
+            mouseLoc.scl(GameConstants.mouseMod);
+            for (int i = uiScene.getElements().size()-1; i >= 0; i--) {
+                if(uiScene.getElements().get(i).containsMouse(mouseLoc)){
+                    uiScene.getElements().get(i).drag(mouseLoc,button);
+                    return;
+                }
             }
         }
 
         @Override
         public void mouseMove(Vector2 mouseLoc) {
+            mouseLoc.scl(GameConstants.mouseMod);
             for (int i = uiScene.getElements().size()-1; i >= 0; i--) {
                 uiScene.getElements().get(i).mouseMove(mouseLoc, this);
             }
@@ -313,11 +373,18 @@ public class UITestScene extends DrawableScene {
 
         @Override
         public void click(Vector2 mouseLoc, IController.KnownMouseButtons button) {
-            if(this.getMovableObj() instanceof ISelectable && this.getMovableObj() instanceof IMovable){
-                if(((ISelectable) this.getMovableObj()).containsMouse(mouseLoc)){
-                    ((ISelectable) this.getMovableObj()).clicked(mouseLoc);
+            mouseLoc.scl(GameConstants.mouseMod);
+            for (int i = uiScene.getElements().size()-1; i >= 0; i--) {
+                if(uiScene.getElements().get(i).containsMouse(mouseLoc)){
+                    uiScene.getElements().get(i).clicked(mouseLoc,button);
+                    return;
                 }
             }
+//            if(this.getMovableObj() instanceof ISelectable && this.getMovableObj() instanceof IMovable){
+//                if(((ISelectable) this.getMovableObj()).containsMouse(mouseLoc)){
+//                    ((ISelectable) this.getMovableObj()).clicked(mouseLoc,button);
+//                }
+//            }
         }
 
         @Override

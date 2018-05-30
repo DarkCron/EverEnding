@@ -3,11 +3,13 @@ package com.ever.ending.management;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.ever.ending.management.input.Controller;
 
 public abstract class DrawableScene{
     private final SpriteBatch sceneBatch;
     private final OrthographicCamera sceneCamera;
+    private FrameBuffer mainCanvas;
 
     public Controller getSceneController() {
         return sceneController;
@@ -19,13 +21,14 @@ public abstract class DrawableScene{
 
     private Controller sceneController;
 
-    public DrawableScene(){
+    public DrawableScene(FrameBuffer mainCanvas){
         sceneBatch = new SpriteBatch();
-        sceneCamera = new OrthographicCamera(GameConstants.SCREEN_WIDTH,GameConstants.SCREEN_HEIGHT);
+        sceneCamera = new OrthographicCamera(GameConstants.TARGET_SCREEN_WIDTH,GameConstants.TARGET_SCREEN_HEIGHT);
         sceneCamera.update();
         sceneController = new Controller();
         Gdx.input.setInputProcessor(sceneController);
         this.loadResources();
+        this.setMainCanvas(mainCanvas);
     }
 
     public abstract void loadResources();
@@ -51,5 +54,12 @@ public abstract class DrawableScene{
         return sceneBatch;
     }
 
+    public void setMainCanvas(FrameBuffer target_render) {
+        this.mainCanvas = target_render;
+    }
+
+    public FrameBuffer getMainCanvas() {
+        return mainCanvas;
+    }
 }
 

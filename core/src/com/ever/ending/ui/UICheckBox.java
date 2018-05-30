@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.ever.ending.gameobject.GameSprite;
+import com.ever.ending.interfaces.control.IController;
 import com.ever.ending.interfaces.drawable.IDrawable;
 import com.ever.ending.management.DeltaTime;
 
@@ -31,8 +32,8 @@ public class UICheckBox extends UIElement {
     }
 
     @Override
-    public void clicked(Vector2 mousePos) {
-        super.clicked(mousePos);
+    public void clicked(Vector2 mousePos, IController.KnownMouseButtons button) {
+        super.clicked(mousePos, button);
         this.setChecked(!this.isChecked);
     }
 

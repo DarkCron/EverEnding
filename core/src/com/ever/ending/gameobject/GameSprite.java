@@ -12,6 +12,10 @@ import com.ever.ending.interfaces.drawable.IDrawable;
 
 public class GameSprite implements IDrawable {
 
+    public Sprite getBaseSprite() {
+        return baseSprite;
+    }
+
     private Sprite baseSprite;
     private String texPath;
 
@@ -75,6 +79,11 @@ public class GameSprite implements IDrawable {
     @Override
     public IDrawable clone() throws CloneNotSupportedException {
         return (GameSprite)super.clone();
+    }
+
+    @Override
+    public Rectangle getScreenPos() {
+        return new Rectangle(this.baseSprite.getX(),this.baseSprite.getY(),this.baseSprite.getWidth(),this.baseSprite.getWidth());
     }
 
     @Override

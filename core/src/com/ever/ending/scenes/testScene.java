@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.ever.ending.gameobject.GameObject;
@@ -24,8 +25,8 @@ public class testScene extends DrawableScene {
     private GameObject someSprite;
     private GameWorld world;
 
-    public testScene(){
-        super();
+    public testScene(FrameBuffer mainCanvas){
+        super(mainCanvas);
         world = new GameWorld();
         someSprite = new GameObject(resourceSprite,new Rectangle(0,0,200,200),world);
         new GameObject(resourceSprite,new Rectangle(-100,0,200,200),world);

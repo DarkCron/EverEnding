@@ -292,6 +292,11 @@ public class GameWorld implements Json.Serializable, IDrawable, IReloadable {
         return null;
     }
 
+    @Override
+    public Rectangle getScreenPos() {
+        return null;
+    }
+
     public void updateSpritePosition(Vector2 oldPosition,Vector2 newPosition,GameObject gameObject) {
         ArrayList<GameChunk> preChunks = this.getGameChunkRegion(new Rectangle(oldPosition.x,oldPosition.y,gameObject.getWidth(),gameObject.getHeight()));
         ArrayList<GameChunk> postChunks = this.getGameChunkRegion(new Rectangle(newPosition.x,newPosition.y,gameObject.getWidth(),gameObject.getHeight()));

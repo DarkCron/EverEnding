@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.ever.ending.interfaces.control.IController;
 import com.ever.ending.interfaces.manipulation.IMovable;
 import com.ever.ending.interfaces.resources.IReloadable;
 import com.ever.ending.management.DeltaTime;
@@ -70,7 +71,7 @@ public class GameObject implements IMovable, IReloadable, IDrawable {
     }
 
     @Override
-    public void drag(Vector2 mouseLoc) {
+    public void drag(Vector2 mouseLoc, IController.KnownMouseButtons button) {
         //TODO
     }
 

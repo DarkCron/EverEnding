@@ -29,6 +29,17 @@ public class GameFont implements Json.Serializable, IResource {
         generator.dispose();
     }
 
+
+    public GameFont(String fontPath, int fontSize, FreeTypeFontGenerator.FreeTypeFontParameter parameters){
+        this.fontPath = fontPath;
+        this.fontSize = fontSize;
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
+        parameters.size = fontSize;
+        this.font = generator.generateFont(parameters);
+        this.font.getData().setLineHeight(fontSize);
+        generator.dispose();
+    }
+
     public BitmapFont getFont() {
         return font;
     }

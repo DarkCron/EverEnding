@@ -173,6 +173,11 @@ public class BasicAnimation implements IAnim, Json.Serializable {
     }
 
     @Override
+    public Rectangle getScreenPos() {
+        return null;
+    }
+
+    @Override
     public void draw(DeltaTime delta, Rectangle box, SpriteBatch batch) {
         batch.draw(frames[currentFrame],box.x,box.y,box.width,box.height);
     }

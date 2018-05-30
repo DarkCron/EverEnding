@@ -37,6 +37,8 @@ public class Controller implements InputProcessor,IControllerCamera,IControllerM
         }
     };
     private static final HashSet<InputKey> holdKeys = new HashSet<>();
+    private static final HashSet<KnownMouseButtons> holdButtons = new HashSet<>();
+    private static KnownMouseButtons lastPressedButton = null;
 
     public void update(DeltaTime delta){
         for (InputKey key: holdKeys) {
@@ -227,13 +229,45 @@ public class Controller implements InputProcessor,IControllerCamera,IControllerM
         return false;
     }
 
+    public boolean isButtonDown(KnownMouseButtons button){
+        return holdButtons.contains(button);
+    }
+
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        KnownMouseButtons knownMouseButton = null;
+        if(button == KnownMouseButtons.LEFT.getButton()){
+            knownMouseButton = KnownMouseButtons.LEFT;
+        }else
+        if(button == KnownMouseButtons.RIGHT.getButton()){
+            knownMouseButton = KnownMouseButtons.RIGHT;
+        }else
+        if(button == KnownMouseButtons.MIDDLE.getButton()){
+            knownMouseButton = KnownMouseButtons.MIDDLE;
+        }
+        holdButtons.add(knownMouseButton);
+        lastPressedButton = knownMouseButton;
         return false;
+    }
+
+    public KnownMouseButtons getLastPressedButton(){
+        return lastPressedButton;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        KnownMouseButtons knownMouseButton = null;
+        if(button == KnownMouseButtons.LEFT.getButton()){
+            knownMouseButton = KnownMouseButtons.LEFT;
+        }else
+        if(button == KnownMouseButtons.RIGHT.getButton()){
+            knownMouseButton = KnownMouseButtons.RIGHT;
+        }else
+        if(button == KnownMouseButtons.MIDDLE.getButton()){
+            knownMouseButton = KnownMouseButtons.MIDDLE;
+        }
+        holdButtons.remove(knownMouseButton);
+        lastPressedButton = null;
         return false;
     }
 
